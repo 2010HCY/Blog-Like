@@ -42,7 +42,7 @@
   user-select: none;
 }
 #zan .heart {
-  background: url(zan.png);
+  background: url(zan.png);   //把zan.png修改成实际图片路径或图床URL
   background-position: left;
   background-repeat: no-repeat;
   height: 100px;
