@@ -1,0 +1,14 @@
+{
+  "name": "hexo-blog-like",
+  "version": "1.0.1",
+  "description": "Like a simple and easy-to-use free blog",
+  "main": "lib/Blog-Like.js",
+  "dependencies": {
+    "leancloud-storage": "^4.5.0"
+  },
+  "hexo": {
+    "version": "4.x"
+  },
+  "author": "Ethaniel",
+  "license": "GNU General Public License v3.0"
+}

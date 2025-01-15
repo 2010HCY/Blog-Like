@@ -18,13 +18,59 @@
 
 下面开始部署教程，你需要提前注册好[**leancloud**账号](https://www.leancloud.com/)，只需要邮箱即可注册，无需绑定信用卡之类的，注册即用（中国大陆版要备案）。
 
-### 1.下载文件
+### npm一键部署
+
+> 适用于Hexo框架，其他框架我没用过
+
+在博客根目录粘贴以下命令一键安装
+
+```
+npm install hexo-blog-like --save
+```
+
+安装好后在博客根目录的_config.yml添加以下配置项：
+
+```
+Blog-Like:
+  enable: true //是否启用本插件
+  AppID: "你的ID" //填写前面获取的AppID
+  AppKEY: "你的KEY" //填写AppKEY
+  xianzhi: true //是否开启访客点赞数限制
+  number: 5 //限制为几个赞，默认是5个
+```
+
+完事后`hexo clean && hexo g && hexo s`启动博客，在你想要的位置插入如下代码块，打开博客瞅瞅效果吧！
+
+```
+<div id="zan" class="clearfix">
+    <div class="heart" onclick="goodplus(url, flag)"></div>
+    <br>
+    <div id="zan_text"></div>
+</div>
+```
+
+<img src="/images/效果展示.png" style="zoom:80%;" />
+
+对你有帮助的话给我个Starred吧！
+
+<iframe
+    src="https://ghbtns.com/github-btn.html?user=2010HCY&repo=Blog-Like&type=star&count=true"
+    frameborder="0"
+    scrolling="0"
+    width="170"
+    height="20"
+    title="GitHub">
+</iframe>
+
+### 手动部署
+
+#### 1.下载文件
 
 首先下载此[压缩包](https://github.com/2010HCY/Blog-Like/releases/download/1.0/Blog-Like.7z)，你也可以到[Releases](https://github.com/2010HCY/Blog-Like/releases)下载最新版本。
 
 下载后解压，得到三个文件zan.css、zan.js、zan.png
 
-### 2.初始化leancloud应用并获取凭证
+#### 2.初始化leancloud应用并获取凭证
 
 注册好[**leancloud**账号](https://www.leancloud.com/)后进入控制台，点击创建应用，计费计划选择开发版，应用名称、描述随便填，
 
@@ -38,7 +84,7 @@
 
 <img src="/images/创建Class.png" style="zoom:70%;" />
 
-### 3.将JS、CSS放入博客
+#### 3.将JS、CSS放入博客
 
 > 不同博客框架、主题路径可能有些许差别，但大体步骤是一样的。我的主题是matery
 
@@ -56,7 +102,7 @@
 
 <img src="/images/点赞次数限制.png" style="zoom:67%;" />
 
-### 引入JS、CSS
+#### 引入JS、CSS
 
 打开你的博客head模板，通常在`themes/[你的主题]/layout/_partial/head.ejs`路径下，在最后几行`</head>`标签前添加以下代码：
 
@@ -97,9 +143,12 @@ Starred！Starred！！Starred！！！弄好后自觉Starred！😈
 ## 未来打算
 
 - [x] 此脚本目前没有限制点赞次数，同一个访客可以不停的搓点赞次数，搓个上万次不成问题，未来打算加入一个开关选择是否限制单访客点赞次数，若打开则通过Cookie记录限制只能点一次赞或几次。
-- [ ] 制作成Hexo插件，可以一键安装使用
+- [x] 制作成Hexo插件，可以一键安装使用
+- [x] 长期接收意见以及维护
 
 ## 版本更新记录
+
+发布npm包，可以在Hexo博客中一键安装咯！ 2025.1.15
 
 2.0版本，增加了点赞次数限制，使用Cookie记录点赞次数 2025.1.15
 
