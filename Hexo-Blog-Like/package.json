@@ -4,18 +4,16 @@
   "description": "A simple and easy-to-use free blog like plugin.",
   "main": "lib/Blog-Like.js",
   "dependencies": {
-    "leancloud-storage": "^4.5.0"
+  "hexo": "^5.0.0"
   },
   "license": "GNU General Public License v3.0",
-  "dependencies": {
-    "hexo": "^5.0.0"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Shiguang-coding/hexo-footer-plugin.git"
+    "url": "https://github.com/2010HCY/Blog-Like"
   },
   "author": {
     "name": "Ethaniel",
     "email": "Ethaniel@100713.xyz",
     "url": "https://100713.xyz"
-  },
+  }
+}
