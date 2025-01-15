@@ -1,4 +1,4 @@
-# Blog-Like 博客点赞
+# Blog-Like 博客点赞插件
 
 ## 特点介绍
 
