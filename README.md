@@ -54,13 +54,8 @@ Blog-Like:
 
 对你有帮助的话给我个Starred吧！
 
-<iframe
-    src="https://ghbtns.com/github-btn.html?user=2010HCY&repo=Blog-Like&type=star&count=true"
-    width="170"
-    height="20"
-    title="GitHub"
-    style="border: none;">
-</iframe>
+[![Star this project on GitHub](https://img.shields.io/github/stars/2010HCY/Blog-Like.svg?style=social)](https://github.com/2010HCY/Blog-Like)
+
 
 ### 手动部署
 
