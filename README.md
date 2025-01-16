@@ -56,11 +56,10 @@ Blog-Like:
 
 <iframe
     src="https://ghbtns.com/github-btn.html?user=2010HCY&repo=Blog-Like&type=star&count=true"
-    frameborder="0"
-    scrolling="0"
     width="170"
     height="20"
-    title="GitHub">
+    title="GitHub"
+    style="border: none;">
 </iframe>
 
 ### 手动部署
