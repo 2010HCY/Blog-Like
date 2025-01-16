@@ -126,13 +126,9 @@ Blog-Like:
 <img src="/images/效果展示.png" style="zoom:80%;" />
 
 Starred！Starred！！Starred！！！弄好后自觉Starred！😈
-<iframe src="https://ghbtns.com/github-btn.html?user=2010HCY&repo=Blog-Like&type=star&count=true"
-    frameborder="0"
-    scrolling="0"
-    width="170"
-    height="20"
-    title="GitHub">
-</iframe>
+
+[![Star this project on GitHub](https://img.shields.io/github/stars/2010HCY/Blog-Like.svg?style=social)](https://github.com/2010HCY/Blog-Like)
+
 
 ## 未来打算
 
