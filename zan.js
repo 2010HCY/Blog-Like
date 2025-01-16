@@ -8,13 +8,13 @@ var url = encodeURIComponent(window.location.href);
 var enableLimit = true;  // 设置是否限制访客点赞次数（true = 限制，false = 不限制）
 var maxLikes = 5;  //上面的值设为true可用此值限制最大点赞次数，5表示单个访客最大点赞次数5次
 
-function getVisitorLikes() {
-    var likes = getCookie("visitor_likes");
-    return likes ? parseInt(likes) : 0; 
+function getVisitorLikes(url) {
+    var likes = getCookie("likes_" + url);
+    return likes ? parseInt(likes) : 0;
 }
 
-function setVisitorLikes(likes) {
-    setCookie("visitor_likes", likes, 30); 
+function setVisitorLikes(url, likes) {
+    setCookie("likes_" + url, likes, 30);
 }
 
 function getCookie(name) {
@@ -30,21 +30,21 @@ function getCookie(name) {
 
 function setCookie(name, value, days) {
     var date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000); 
     var expires = "expires=" + date.toUTCString();
     document.cookie = name + "=" + value + ";" + expires + ";path=/";
 }
 
 function goodplus(url) {
     if (enableLimit) {
-        var currentLikes = getVisitorLikes();
+        var currentLikes = getVisitorLikes(url);
         if (currentLikes >= maxLikes) {
             showAlert("最多只能点 " + maxLikes + " 个赞");
-            return; 
+            return;
         }
     }
 
-    senddata(url, 1);
+    senddata(url, 1); 
 }
 
 function senddata(url, flag) {
@@ -61,8 +61,8 @@ function senddata(url, flag) {
             zan.save().then(function () {
                 document.getElementById("zan_text").innerHTML = flag === 1 ? "1" : "0";
                 if (enableLimit && flag === 1) {
-                    var currentLikes = getVisitorLikes();
-                    setVisitorLikes(currentLikes + 1); 
+                    var currentLikes = getVisitorLikes(url);
+                    setVisitorLikes(url, currentLikes + 1); 
                 }
             });
         } else {
@@ -74,8 +74,8 @@ function senddata(url, flag) {
                 zan.save().then(function () {
                     document.getElementById("zan_text").innerHTML = vViews + 1;
                     if (enableLimit) {
-                        var currentLikes = getVisitorLikes();
-                        setVisitorLikes(currentLikes + 1);
+                        var currentLikes = getVisitorLikes(url);
+                        setVisitorLikes(url, currentLikes + 1);
                     }
                 });
             } else {
@@ -118,7 +118,7 @@ function showAlert(message) {
 }
 
 $(document).ready(function () {
-    senddata(url, flag);
+    senddata(url, flag); 
 
     $('body').on("click", '.heart', function () {
         var heartClass = $('.heart').attr("class");

@@ -3,7 +3,7 @@ const path = require('path');
 
 const config = hexo.config['Blog-Like'] || {};
 
-hexo.extend.generator.register('blog-like', function() {
+hexo.extend.generator.register('blog-like', function () {
     const assetsPath = path.join(hexo.public_dir, 'Blog-Like');
     const jsFilePath = path.join(assetsPath, 'Blog-Like.js');
     const cssFilePath = path.join(assetsPath, 'style.css');
@@ -27,13 +27,13 @@ hexo.extend.generator.register('blog-like', function() {
     var enableLimit = ${config.xianzhi !== undefined ? config.xianzhi : true}; 
     var maxLikes = ${config.number || 5};  
 
-    function getVisitorLikes() {
-        var likes = getCookie("visitor_likes");
-        return likes ? parseInt(likes) : 0; 
+    function getVisitorLikes(url) {
+        var likes = getCookie("likes_" + url);
+        return likes ? parseInt(likes) : 0;
     }
 
-    function setVisitorLikes(likes) {
-        setCookie("visitor_likes", likes, 30); 
+    function setVisitorLikes(url, likes) {
+        setCookie("likes_" + url, likes, 30);
     }
 
     function getCookie(name) {
@@ -49,52 +49,56 @@ hexo.extend.generator.register('blog-like', function() {
 
     function setCookie(name, value, days) {
         var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000); 
         var expires = "expires=" + date.toUTCString();
         document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
 
     function goodplus(url) {
         if (enableLimit) {
-            var currentLikes = getVisitorLikes();
+            var currentLikes = getVisitorLikes(url);
             if (currentLikes >= maxLikes) {
                 showAlert("最多只能点 " + maxLikes + " 个赞");
-                return; 
+                return;
             }
         }
-        senddata(url, 1);
+
+        senddata(url, 1); 
     }
 
     function senddata(url, flag) {
         var Zan = AV.Object.extend('Zan');
         var query = new AV.Query('Zan');
         query.equalTo("url", url);
-        
+
         query.find().then(function (results) {
             if (results.length === 0) {
+                console.log("新增记录");
                 var zan = new Zan();
                 zan.set('url', url);
                 zan.set('views', flag === 1 ? 1 : 0);
                 zan.save().then(function () {
                     document.getElementById("zan_text").innerHTML = flag === 1 ? "1" : "0";
                     if (enableLimit && flag === 1) {
-                        var currentLikes = getVisitorLikes();
-                        setVisitorLikes(currentLikes + 1); 
+                        var currentLikes = getVisitorLikes(url);
+                        setVisitorLikes(url, currentLikes + 1); 
                     }
                 });
             } else {
                 var zan = results[0];
                 var vViews = zan.get('views');
                 if (flag === 1) {
+                    console.log("更新记录");
                     zan.set('views', vViews + 1);
                     zan.save().then(function () {
                         document.getElementById("zan_text").innerHTML = vViews + 1;
                         if (enableLimit) {
-                            var currentLikes = getVisitorLikes();
-                            setVisitorLikes(currentLikes + 1);
+                            var currentLikes = getVisitorLikes(url);
+                            setVisitorLikes(url, currentLikes + 1);
                         }
                     });
                 } else {
+                    console.log("显示已有数据");
                     document.getElementById("zan_text").innerHTML = vViews;
                 }
             }
@@ -133,7 +137,8 @@ hexo.extend.generator.register('blog-like', function() {
     }
 
     $(document).ready(function () {
-        senddata(url, flag);
+        senddata(url, flag); 
+
         $('body').on("click", '.heart', function () {
             var heartClass = $('.heart').attr("class");
             if (heartClass === 'heart') {
