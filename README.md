@@ -132,8 +132,7 @@ Blog-Like:
 <img src="/images/效果展示.png" style="zoom:80%;" />
 
 Starred！Starred！！Starred！！！弄好后自觉Starred！😈
-<iframe
-    src="https://ghbtns.com/github-btn.html?user=2010HCY&repo=Blog-Like&type=star&count=true"
+<iframe src="https://ghbtns.com/github-btn.html?user=2010HCY&repo=Blog-Like&type=star&count=true"
     frameborder="0"
     scrolling="0"
     width="170"
@@ -145,6 +144,7 @@ Starred！Starred！！Starred！！！弄好后自觉Starred！😈
 
 - [x] 此脚本目前没有限制点赞次数，同一个访客可以不停的搓点赞次数，搓个上万次不成问题，未来打算加入一个开关选择是否限制单访客点赞次数，若打开则通过Cookie记录限制只能点一次赞或几次。
 - [x] 制作成Hexo插件，可以一键安装使用
+- [ ] 制作多种样式以供选择
 - [x] 长期接收意见以及维护
 
 ## 版本更新记录
