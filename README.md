@@ -70,6 +70,12 @@ Blog-Like:
 
 <img src="/images/效果展示.png" style="zoom:80%;" />
 
+如果你不想要手动一个个添加，你可以编辑主题的文章模板（通常位于主题/主题名/目录下的`layout/_partial/article.ejs`或`layout/post.ejs`文件）里添加此代码段。
+
+> 我使用的主题是`matery`，该主题把代码段放置在`layout/_partial/reprint-statement.ejs`文件中最前面效果最好，其他主题视情况而定。
+>
+> <img src="/images/添加代码段.png" style="zoom:80%;" />
+
 对你有帮助的话给我个Starred吧！
 
 [![Star this project on GitHub](https://img.shields.io/github/stars/2010HCY/Blog-Like.svg?style=social)](https://github.com/2010HCY/Blog-Like)
@@ -80,6 +86,7 @@ Blog-Like:
 - [x] 此脚本目前没有限制点赞次数，同一个访客可以不停的搓点赞次数，搓个上万次不成问题，未来打算加入一个开关选择是否限制单访客点赞次数，若打开则通过Cookie记录限制只能点一次赞或几次。
 - [x] 制作成Hexo插件，可以一键安装使用
 - [ ] 制作多种样式以供选择
+- [ ] 支持多种存储方式
 - [x] 长期接收意见以及维护
 
 ## 版本更新记录
