@@ -11,7 +11,7 @@
 
 效果展示：
 
-<img src="/images/效果展示.png" style="zoom:80%;" />
+<img src="/images/效果展示.gif" style="zoom:80%;" />
 
 不仅仅是Hexo，所以静态博客都可以用，只是其他博客需要自己下载代码植入博客，Hexo可以一键安装
 
