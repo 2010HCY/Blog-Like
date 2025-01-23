@@ -1,7 +1,9 @@
 const fs = require('fs');
 const path = require('path');
+const yaml = require('js-yaml');
 
-const config = hexo.config['Blog-Like'] || {};
+const config = hexo.config['Blog-Like'] || {}; 
+const serverURLs = config.serverURLs || ''; 
 
 hexo.extend.generator.register('blog-like', function () {
     const assetsPath = path.join(hexo.public_dir, 'Blog-Like');
@@ -14,12 +16,14 @@ hexo.extend.generator.register('blog-like', function () {
     }
 
     fs.copyFileSync(path.join(__dirname, '../assets/style.css'), cssFilePath);
-    fs.copyFileSync(path.join(__dirname, '../assets/zan.png'), pngFilePath);
+    fs.copyFileSync(path.join(__dirname, '../assets/zan.png'), pngFilePa
+    const serverConfig = serverURLs ? `serverURLs: '${serverURLs}',` : ''; 
 
     const jsContent = `
     AV.init({
         appId: '${config.AppID || 'your_default_app_id'}',
-        appKey: '${config.AppKEY || 'your_default_app_key'}'
+        appKey: '${config.AppKEY || 'your_default_app_key'}',
+        ${serverConfig} 
     });
     var flag = 0;
     var url = encodeURIComponent(window.location.href);

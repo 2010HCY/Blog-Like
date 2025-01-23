@@ -37,6 +37,8 @@
 
 <img src="/images/创建Class.png" style="zoom:70%;" />
 
+> leancloud有中国版和国际版，国际版无需备案，完成上述步骤即可使用，中国版需要多一个步骤绑定API域名，在设置→域名绑定里。（根据服务条款域名要备案）
+
 ### 2.安装配置插件
 
 > 适用于Hexo框架，其他框架我没用过
@@ -51,12 +53,24 @@ npm install hexo-blog-like --save
 
 ```
 Blog-Like:
-  enable: true //是否启用本插件
-  AppID: "你的ID" //填写前面获取的AppID
-  AppKEY: "你的KEY" //填写AppKEY
-  xianzhi: true //是否开启访客点赞数限制
-  number: 5 //限制为几个赞，默认是5个
+  enable: true 
+  AppID: "你的ID" 
+  AppKEY: "你的KEY" 
+  xianzhi: true 
+  number: 5 
+ #非必填serverURLs:
 ```
+
+> 配置项说明：
+> enable是否启用本插件
+>
+> `AppID`、`AppKEY`前面获取的`AppID`、`AppKEY`
+>
+> `xianzhi`是否限制访客点赞数
+>
+> 若`xianzhi`为true，则可以使用`number`限制单用户点赞数
+>
+> 若你使用的是中国版leancloud，你需要添加`serverURLs`配置项，值填写你前面绑定的API域名
 
 完事后`hexo clean && hexo g && hexo s`启动博客，在你想要的显示位置（例如文章末尾）插入如下代码块，打开博客瞅瞅效果吧！
 
@@ -91,19 +105,23 @@ Blog-Like:
 
 ## 版本更新记录
 
-**v2.1 (2025.1.16)**
+**v2.1.1 (2025.1.23)**
+
+添加了中国版leancloud适配
+
+**v2.1.0 (2025.1.16)**
 
 修复了多个页面只能点五个赞，新版本把不同URL分开计算
 
-**v2.0 (2025.1.15)**
+**v2.0.0 (2025.1.15)**
 
 发布npm包，可以在Hexo博客中一键安装咯！
 
-**v1.1 (2025.1.15)**
+**v1.1.0 (2025.1.15)**
 
 增加了点赞次数限制，使用Cookie记录点赞次数，优化了代码逻辑
 
-**v1.0 (2025.1.14)**
+**v1.0.0 (2025.1.14)**
 
 博客点赞插件横空出世 
 
