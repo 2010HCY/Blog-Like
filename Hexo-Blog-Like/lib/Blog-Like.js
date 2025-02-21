@@ -5,6 +5,11 @@ const yaml = require('js-yaml');
 const config = hexo.config['Blog-Like'] || {}; 
 const serverURLs = config.serverURLs || ''; 
 
+if (!config.enable) {
+    console.log('Blog-Like 插件已禁用');
+    return; // 停止执行插件
+}
+
 hexo.extend.generator.register('blog-like', function () {
     const assetsPath = path.join(hexo.public_dir, 'Blog-Like');
     const jsFilePath = path.join(assetsPath, 'Blog-Like.js');
@@ -16,7 +21,7 @@ hexo.extend.generator.register('blog-like', function () {
     }
 
     fs.copyFileSync(path.join(__dirname, '../assets/style.css'), cssFilePath);
-    fs.copyFileSync(path.join(__dirname, '../assets/zan.png'), pngFilePa
+    fs.copyFileSync(path.join(__dirname, '../assets/zan.png'), pngFilePath);
     const serverConfig = serverURLs ? `serverURLs: '${serverURLs}',` : ''; 
 
     const jsContent = `

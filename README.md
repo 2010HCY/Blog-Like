@@ -37,7 +37,7 @@
 
 <img src="/images/创建Class.png" style="zoom:70%;" />
 
-> leancloud有中国版和国际版，国际版无需备案，完成上述步骤即可使用，中国版需要多一个步骤绑定API域名，在设置→域名绑定里。（根据服务条款域名要备案）
+> leancloud有**中国版和国际版**，国际版**无需备案**，完成上述步骤即可使用，中国版需要**多一个步骤****绑定API域名**，在设置→域名绑定里。（根据服务条款域名好像要备案）
 
 ### 2.安装配置插件
 
@@ -58,19 +58,23 @@ Blog-Like:
   AppKEY: "你的KEY" 
   xianzhi: true 
   number: 5 
- #非必填serverURLs:
+ #非必填 serverURLs:
 ```
 
 > 配置项说明：
 > enable是否启用本插件
 >
-> `AppID`、`AppKEY`前面获取的`AppID`、`AppKEY`
+> `AppID`、`AppKEY`是前面获取的`AppID`、`AppKEY`
 >
 > `xianzhi`是否限制访客点赞数
 >
 > 若`xianzhi`为true，则可以使用`number`限制单用户点赞数
 >
-> 若你使用的是中国版leancloud，你需要添加`serverURLs`配置项，值填写你前面绑定的API域名
+> 若你使用的是**中国版**leancloud，你需要添加`serverURLs`配置项，填写你前面绑定的API域名，注意，使用中国版必须要绑定自己的域名，必须！
+>
+> 国际版API在大陆不可用，你可以通过反代API在大陆使用，反代的域名是设置→应用凭证里的服务器地址
+>
+> （REST API 服务器地址）
 
 完事后`hexo clean && hexo g && hexo s`启动博客，在你想要的显示位置（例如文章末尾）插入如下代码块，打开博客瞅瞅效果吧！
 
@@ -104,6 +108,10 @@ Blog-Like:
 - [x] 长期接收意见以及维护
 
 ## 版本更新记录
+
+**v2.1.2 (2025.2.06)**
+
+修复了运行报错。
 
 **v2.1.1 (2025.1.23)**
 
