@@ -19,27 +19,15 @@
 
 ## 部署教程
 
-下面开始部署教程，你需要有一个[**leancloud**账号](https://www.leancloud.com/)，没有的话就注册一个，只需要邮箱即可注册，无需绑定信用卡之类的，注册即用（中国大陆版要备案，可以使用国际版，备案要支付宝刷脸）。
+### 使用Cloudflare做后端（推荐）
 
-在开始之前，你需要获取AppID和AppKEY这两个凭证：
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/2010HCY/Blog-Likes-Backend)
 
-### 1.初始化leancloud应用并获取凭证
+点击上方按钮一键部署后端，然后绑定自定义域（自带的workers.dev在中国大陆访问不稳定）
 
-注册好[**leancloud**账号](https://www.leancloud.com/)后进入控制台，点击创建应用，计费计划选择开发版，应用名称、描述随便填，
+记好你的Workers地址，然后
 
-<img src="/images/创建应用.png" style="zoom:80%;" />
-
-创建好后进入应用设置→点击应用凭证，将**AppID**和**AppKey**复制下来待会要用
-
-<img src="/images/获取应用凭证.png" style="zoom:80%;" />
-
-然后打开数据存储→结构化数据，创建一个名为Zan的Class。
-
-<img src="/images/创建Class.png" style="zoom:70%;" />
-
-> leancloud有**中国版和国际版**，国际版**无需备案**，完成上述步骤即可使用，中国版需要**多一个步骤****绑定API域名**，在设置→域名绑定里。（根据服务条款域名好像要备案）
-
-### 2.安装配置插件
+### 安装配置插件
 
 > 适用于Hexo框架，其他框架我没用过
 
@@ -53,28 +41,14 @@ npm install hexo-blog-like --save
 
 ```
 Blog-Like:
-  enable: true 
-  AppID: "你的ID" 
-  AppKEY: "你的KEY" 
-  xianzhi: true 
-  number: 5 
- #非必填 serverURLs:
+enable: true #是否启用插件
+Backend: Cloudflare # 或者 Leancloud，默认Cloudflare
+CloudflareBackend: #你的后端地址
+AppID: #如果你使用Leancloud，记得填你的Leancloud ID和KEY，获取方法在后面
+AppKEY: #你的KEY
+xianzhi: true #是否限制点赞数，默认开启
+number: 5 #如果限制点赞数，限制的点赞数，默认为5个赞
 ```
-
-> 配置项说明：
-> enable是否启用本插件
->
-> `AppID`、`AppKEY`是前面获取的`AppID`、`AppKEY`
->
-> `xianzhi`是否限制访客点赞数
->
-> 若`xianzhi`为true，则可以使用`number`限制单用户点赞数
->
-> 若你使用的是**中国版**leancloud，你需要添加`serverURLs`配置项，填写你前面绑定的API域名，注意，使用中国版必须要绑定自己的域名，必须！
->
-> 国际版API在大陆不可用，你可以通过反代API在大陆使用，反代的域名是设置→应用凭证里的服务器地址
->
-> （REST API 服务器地址）
 
 完事后`hexo clean && hexo g && hexo s`启动博客，在你想要的显示位置（例如文章末尾）插入如下代码块，打开博客瞅瞅效果吧！
 
@@ -98,16 +72,43 @@ Blog-Like:
 
 [![Star this project on GitHub](https://img.shields.io/github/stars/2010HCY/Blog-Like.svg?style=social)](https://github.com/2010HCY/Blog-Like)
 
+### 使用Leancloud做后端（不推荐，中国大陆要备案）
+
+下面开始部署教程，你需要有一个[**leancloud**账号](https://www.leancloud.com/)，没有的话就注册一个，只需要邮箱即可注册，无需绑定信用卡之类的，注册即用（中国大陆版要备案，可以使用国际版，备案要支付宝刷脸）。
+
+在开始之前，你需要获取AppID和AppKEY这两个凭证：
+
+#### 1.初始化leancloud应用并获取凭证
+
+注册好[**leancloud**账号](https://www.leancloud.com/)后进入控制台，点击创建应用，计费计划选择开发版，应用名称、描述随便填，
+
+<img src="/images/创建应用.png" style="zoom:80%;" />
+
+创建好后进入应用设置→点击应用凭证，将**AppID**和**AppKey**复制下来待会要用
+
+<img src="/images/获取应用凭证.png" style="zoom:80%;" />
+
+然后打开数据存储→结构化数据，创建一个名为Zan的Class。
+
+<img src="/images/创建Class.png" style="zoom:70%;" />
+
+> leancloud有**中国版和国际版**，国际版**无需备案**，完成上述步骤即可使用，中国版需要**多一个步骤****绑定API域名**，在设置→域名绑定里。（根据服务条款域名好像要备案）
+
+获取好凭证后按照安装配置插件的步骤安装即可
 
 ## 未来打算
 
 - [x] 此脚本目前没有限制点赞次数，同一个访客可以不停的搓点赞次数，搓个上万次不成问题，未来打算加入一个开关选择是否限制单访客点赞次数，若打开则通过Cookie记录限制只能点一次赞或几次。
 - [x] 制作成Hexo插件，可以一键安装使用
 - [ ] 制作多种样式以供选择
-- [ ] 支持多种存储方式
+- [x] 支持多种存储方式
 - [x] 长期接收意见以及维护
 
 ## 版本更新记录
+
+**v2.2.0 (2025.4.20)**
+
+增加了Cloudflare存储点赞数据方式
 
 **v2.1.2 (2025.2.06)**
 
