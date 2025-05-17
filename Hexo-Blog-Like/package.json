@@ -1,6 +1,6 @@
 {
   "name": "hexo-blog-like",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "A simple and easy-to-use free blog like plugin.",
   "main": "lib/Blog-Like.js",
   "dependencies": {
@@ -14,6 +14,6 @@
   "author": {
     "name": "Ethaniel",
     "email": "Ethaniel@100713.xyz",
-    "url": "https://100713.xyz"
+    "url": "https://teahush.link"
   }
 }

@@ -129,7 +129,13 @@ hexo.on('generateAfter', function() {
       var apiUrl = 'https://' + backend + '/likes/page?url=' + urlParam;
       if (flag) apiUrl += "&likes=1";
       fetch(apiUrl)
-        .then(r => r.json())
+        .then(function(resp){
+          if (resp.status === 429 && (response.statusText === "Too Many Requests" || response.statusText === "TOO MANY REQUESTS")) {
+            showAlert("您已达到速率限制");
+            throw new Error("429");
+          }
+          return resp.json();
+        })
         .then(d => {
           if (typeof d['likes'] !== "undefined") {
             updateZanText(d['likes']);
@@ -143,6 +149,7 @@ hexo.on('generateAfter', function() {
           }
         })
         .catch(e => {
+          if(e && e.message === "429") return;
           showAlert("后端请求失败, 请检查Cloudflare配置");
         });
     }
