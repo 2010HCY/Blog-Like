@@ -23,13 +23,16 @@ npm install hexo-blog-like --save
 
 ```
 Blog-Like:
-enable: true #是否启用插件
-Backend: Cloudflare # 或者 Leancloud，默认Cloudflare
-CloudflareBackend: #你的后端地址
-AppID: #如果你使用Leancloud，记得填你的Leancloud ID和KEY
-AppKEY: #你的KEY
-xianzhi: true #是否限制点赞数，默认开启
-number: 5 #如果限制点赞数，限制的点赞数，默认为5个赞
+  enable: true #是否启用插件
+  Backend: Cloudflare # 或者 Leancloud，默认Cloudflare
+  CloudflareBackend: #你的后端地址
+  AppID: #如果你使用Leancloud，记得填你的Leancloud ID和KEY
+  AppKEY: #你的KEY
+  xianzhi: true #是否限制点赞数，默认开启
+  number: 5 #如果限制点赞数，限制的点赞数，默认为5个赞
+  GoogleAnalytics: true #是否向谷歌分析发送点赞事件，默认关闭
+  GAEventCategory: Engagement #点赞事件类别，默认Engagement
+  GAEventAction: Like #事件名称，默认Like
 ```
 
 完事后`hexo clean && hexo g && hexo s`启动博客，在你想要的位置插入如下代码块，打开博客瞅瞅效果吧！

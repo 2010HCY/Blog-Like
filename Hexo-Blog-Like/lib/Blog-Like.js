@@ -35,7 +35,10 @@ hexo.on('generateAfter', function() {
     AppID: cfg.AppID || "",
     AppKEY: cfg.AppKEY || "",
     xianzhi: (typeof cfg.xianzhi === 'undefined' ? true : cfg.xianzhi),
-    number: (typeof cfg.number === 'undefined' ? 5 : Number(cfg.number))
+    number: (typeof cfg.number === 'undefined' ? 5 : Number(cfg.number)),
+    GoogleAnalytics: (typeof cfg.GoogleAnalytics === 'undefined' ? false : cfg.GoogleAnalytics),
+    GAEventCategory: cfg.GAEventCategory || "Engagement",
+    GAEventAction: cfg.GAEventAction || "Like"
   };
 
   // 复制静态资源
@@ -109,6 +112,14 @@ hexo.on('generateAfter', function() {
     var el = document.getElementById("zan_text");
     if (el) el.innerHTML = num;
   }
+  function sendGAEvent() {
+    if (BLOG_LIKE_CONFIG.GoogleAnalytics && typeof window.gtag === 'function') {
+      gtag('event', BLOG_LIKE_CONFIG.GAEventAction || 'Like', {
+        'event_category': BLOG_LIKE_CONFIG.GAEventCategory || 'Engagement',
+        'event_label': window.url // 使用当前页面URL作为事件标签
+      });
+    }
+  }    
 
   // Cloudflare存储
   function mainCloudflare() {
@@ -130,7 +141,7 @@ hexo.on('generateAfter', function() {
       if (flag) apiUrl += "&likes=1";
       fetch(apiUrl)
         .then(function(resp){
-          if (resp.status === 429 && (response.statusText === "Too Many Requests" || response.statusText === "TOO MANY REQUESTS")) {
+          if (resp.status === 429) {
             showAlert("您已达到速率限制");
             throw new Error("429");
           }
@@ -164,6 +175,7 @@ hexo.on('generateAfter', function() {
           return;
         }
       }
+      sendGAEvent();  
       likeBackend(true);
       heartAnimation();
     };
@@ -243,6 +255,7 @@ hexo.on('generateAfter', function() {
           return;
         }
       }
+      sendGAEvent();   
       likeBackend(true);
       heartAnimation();
     };

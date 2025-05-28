@@ -7,7 +7,10 @@
     AppID: "", // 你的ID
     AppKEY: "", // 你的KEY
     xianzhi: true, // 是否限制点赞数
-    number: 5 // 限制几个赞
+    number: 5, // 限制几个赞
+    GoogleAnalytics: false, // 是否启用谷歌分析事件追踪，默认关闭
+    GAEventCategory: "Engagement", // 事件类别，默认Engagement
+    GAEventAction: "Like" // 事件操作名称，默认Like
   };
   // === 配置项 END ===
 
@@ -67,6 +70,14 @@
     var el = document.getElementById("zan_text");
     if (el) el.innerHTML = num;
   }
+  function sendGAEvent() {
+    if (BLOG_LIKE_CONFIG.GoogleAnalytics && typeof window.gtag === 'function') {
+      gtag('event', BLOG_LIKE_CONFIG.GAEventAction || 'Like', {
+        'event_category': BLOG_LIKE_CONFIG.GAEventCategory || 'Engagement',
+        'event_label': window.url
+      });
+    }
+  }
 
   // Cloudflare存储
   function mainCloudflare() {
@@ -87,7 +98,7 @@
       if (flag) apiUrl += "&likes=1";
       fetch(apiUrl)
         .then(function(resp){
-          if (resp.status === 429 && (response.statusText === "Too Many Requests" || response.statusText === "TOO MANY REQUESTS")) {
+          if (resp.status === 429) {
             showAlert("您已达到速率限制");
             throw new Error("429");
           }
@@ -121,6 +132,7 @@
           return;
         }
       }
+      sendGAEvent();
       likeBackend(true);
       heartAnimation();
     };
@@ -199,6 +211,7 @@
           return;
         }
       }
+      sendGAEvent();
       likeBackend(true);
       heartAnimation();
     };
