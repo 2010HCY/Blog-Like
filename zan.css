@@ -27,7 +27,7 @@
 #zan {
 	margin-top:40px;
 	position:relative;
-	    -webkit-transition: box-shadow .3s ease-in-out;
+	  -webkit-transition: box-shadow .3s ease-in-out;
     -moz-transition: box-shadow .3s ease-in-out;
     -o-transition: box-shadow .3s ease-in-out;
     -ms-transition: box-shadow .3s ease-in-out;
@@ -42,7 +42,7 @@
   user-select: none;
 }
 #zan .heart {
-  background: url(zan.png);   //把zan.png修改成实际图片路径或图床URL
+  background: url(zan.png);   /* 把zan.png修改成实际图片路径或图床URL */
   background-position: left;
   background-repeat: no-repeat;
   height: 100px;

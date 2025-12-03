@@ -15,11 +15,11 @@
 
 不仅仅是Hexo，所以静态博客都可以用，只是其他博客需要自己下载代码植入博客，Hexo可以一键安装
 
-你可以到我的博客体验一下点赞功能哦 [立即前往](https://100713.xyz/%E7%BD%91%E7%AB%99%E7%BB%B4%E6%8A%A4/Hexo%E5%8D%9A%E5%AE%A2%E5%8A%A0%E5%85%A5%E7%82%B9%E8%B5%9E%E5%8A%9F%E8%83%BD) 
+你可以到我的博客体验一下点赞功能哦 [立即前往](https://hcyhub.com/%E7%BD%91%E7%AB%99%E7%BB%B4%E6%8A%A4/Hexo%E5%8D%9A%E5%AE%A2%E5%8A%A0%E5%85%A5%E7%82%B9%E8%B5%9E%E5%8A%9F%E8%83%BD) 
 
 ## 部署教程
 
-### 使用Cloudflare做后端（推荐）
+### 使用Cloudflare做后端（推荐，可白嫖）
 
 [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/2010HCY/Blog-Likes-Backend)
 
@@ -37,13 +37,14 @@
 npm install hexo-blog-like --save
 ```
 
-安装好后在博客根目录的`_config.yml`（**不是你主题的`_config.yml`！**）添加以下配置项：
+安装好后在博客根目录的`_config.yml`（**不是你主题的`_config.yml`！**）添加以下配置项并填写：
 
-```
+```yml
 Blog-Like:
   enable: true #是否启用插件
-  Backend: Cloudflare # 或者 Leancloud，默认Cloudflare
+  Backend: Cloudflare # 或者 Cloudflare | Leancloud | PHP，默认Cloudflare
   CloudflareBackend: #你的后端地址
+  PHPBackend: #自部署PHP后端地址
   AppID: #如果你使用Leancloud，记得填你的Leancloud ID和KEY，获取方法在后面
   AppKEY: #你的KEY
   xianzhi: true #是否限制点赞数，默认开启
@@ -55,7 +56,7 @@ Blog-Like:
 
 完事后`hexo clean && hexo g && hexo s`启动博客，在你想要的显示位置（例如文章末尾）插入如下代码块，打开博客瞅瞅效果吧！
 
-```
+```html
 <div id="zan" class="clearfix">
     <div class="heart" onclick="goodplus(url, flag)"></div>
     <br>
@@ -74,6 +75,109 @@ Blog-Like:
 对你有帮助的话给我个Starred吧！
 
 [![Star this project on GitHub](https://img.shields.io/github/stars/2010HCY/Blog-Like.svg?style=social)](https://github.com/2010HCY/Blog-Like)
+
+### 使用PHP做后端（推荐，自由度高）
+
+部署PHP后端需要有自己的服务器，服务器上应安装PHP环境（我的版本是8.4.13），Mysql数据库。
+
+#### Mysql数据库
+
+首先创建一个数据库，记好以下信息：
+
+> 主机地址通常是 localhost，看你的数据库部署方式，自己找数据库连接地址。
+
+1. 数据库主机地址
+2. 数据库名称
+3. 数据库用户名
+4. 数据库密码
+
+初始化数据库：
+
+1. 创建 Post 表
+
+```
+CREATE TABLE `Post` (
+  `Url` varchar(512) NOT NULL COMMENT 'URL',
+  `VisitCount` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'PV',
+  `VisitorCount` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'UV',
+  `CreatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `UpdatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`Url`),
+  UNIQUE KEY `url_unique` (`Url`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='页面访问数据';
+```
+
+2. 创建 Site 表
+
+```
+CREATE TABLE `Site` (
+  `Domain` varchar(255) NOT NULL COMMENT 'Domain',
+  `VisitCount` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'PV',
+  `VisitorCount` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'UV',
+  `CreatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `UpdatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`Domain`),
+  UNIQUE KEY `domain_unique` (`Domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='站点访问数据';
+```
+
+3. 创建 Likes 表
+
+```
+CREATE TABLE `Likes` (
+  `Url` varchar(512) NOT NULL COMMENT 'URL',
+  `Likes` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '点赞数',
+  `CreatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `UpdatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`Url`),
+  UNIQUE KEY `url_unique` (`Url`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='点赞数据';
+```
+
+Post表是记录文章访问量统计数据的，Site表是记录站点访问量统计数据的（此PHP后端是二合一的，包含访问量统计+点赞后端两个功能，若不需要访问量统计Post、Site表可以不创建）
+
+#### PHP后端部署
+
+下载[index.php](/index.php)，用文本编辑器打开，修改配置项、CORS跨域、默认跨域。
+
+> 此PHP还有访问量统计后端功能，点赞后端只是一部分
+
+```
+/* ======================== 配置 ======================== */
+
+define('DB_HOST', 'HOST');       // 数据库主机地址
+define('DB_NAME', 'DbName');     // 数据库名称
+define('DB_USER', 'DbUser');     // 数据库用户名
+define('DB_PASS', 'Password');   // 数据库密码
+
+// 允许的域名
+$ALLOW_DOMAINS = [
+    'example.com', // 可添加多个，用逗号分隔
+    'example.example.com',
+];
+
+/* ======================== CORS 处理 ======================== */
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$allow = false;
+
+foreach ($ALLOW_DOMAINS as $dom) {
+    if (preg_match("~^https://([a-z0-9-]+\.)?$dom$~i", $origin)) {
+        $allow = true;
+        break;
+    }
+}
+
+if ($allow) {
+    header("Access-Control-Allow-Origin: $origin");
+} else {
+    header("Access-Control-Allow-Origin: https://example.com"); // 默认允许的域名，自己修改
+}
+```
+
+填写好后部署网站，记下PHP网站运行地址，`/like`是点赞后端路由地址`/visitor-count`是访问量统计地址。
+
+然后：[安装配置插件](#安装配置插件)
 
 ### 使用Leancloud做后端（不推荐，中国大陆要备案）
 
@@ -108,6 +212,10 @@ Blog-Like:
 - [x] 长期接收意见以及维护
 
 ## 版本更新记录
+**v3.0.0 (2025.12.03)**
+
+不再使用URL传参，改为Post JSON，避免爬虫扫接口，添加新的存储PHP
+**注意，v2.* 升级到v3.* 需要更新后端！**
 
 **v2.2.2 (2025.5.28)**
 

@@ -24,8 +24,9 @@ npm install hexo-blog-like --save
 ```
 Blog-Like:
   enable: true #是否启用插件
-  Backend: Cloudflare # 或者 Leancloud，默认Cloudflare
-  CloudflareBackend: #你的后端地址
+  Backend: Cloudflare # 或者 Leancloud | Cloudflare | PHP，默认Cloudflare
+  CloudflareBackend: #你的Cloudflare后端地址
+  PHPBackend: #自部署PHP后端地址
   AppID: #如果你使用Leancloud，记得填你的Leancloud ID和KEY
   AppKEY: #你的KEY
   xianzhi: true #是否限制点赞数，默认开启
