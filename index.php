@@ -189,6 +189,7 @@ function handle_like($Db){
         $likes = $row ? intval($row['Likes']) : 0;
 
         if ($Add > 0) $likes += $Add;
+        if ($Add < 0) $likes = max(0, $likes + $Add);
 
         if ($row)
             $Db->prepare("UPDATE Likes SET Likes=? WHERE Url=?")->execute([$likes,$Url]);

@@ -64,7 +64,6 @@
   left: -15px;
   line-height: 100px;
 }
-
 @keyframes heartBlast {
   0% {
     background-position: left;
@@ -79,5 +78,8 @@
   animation-duration: 0.8s;
   animation-iteration-count: 1;
   animation-timing-function: steps(28);
+  background-position: right;
+}
+#zan .heart.liked {
   background-position: right;
 }

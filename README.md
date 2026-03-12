@@ -4,7 +4,7 @@
 
 此点赞功能适配Hexo博客，适合任何静态网站，只是步骤有所不同，以下是它的特点：
 
-1. 免费，此点赞功能使用开发者的好伙伴**leancloud**存储点赞数据，免费版足够使用
+1. 免费，此点赞功能可以使用**leancloud**、**Cloudflare**或自部署服务器存储点赞数据，免费足够使用
 2. 简洁，轻轻一点即可完成操作
 3. 小巧，大小仅24.4kb（图像资源20kb）
 4. 便捷，Hexo框架的博客仅需3步即可使用！
@@ -47,12 +47,12 @@ Blog-Like:
   PHPBackend: #自部署PHP后端地址
   AppID: #如果你使用Leancloud，记得填你的Leancloud ID和KEY，获取方法在后面
   AppKEY: #你的KEY
-  xianzhi: true #是否限制点赞数，默认开启
-  number: 5 #如果限制点赞数，限制的点赞数，默认为5个赞
   GoogleAnalytics: true #是否向谷歌分析发送点赞事件，默认关闭
   GAEventCategory: Engagement #点赞事件类别，默认Engagement
   GAEventAction: Like #事件名称，默认Like
 ```
+
+后端地址可以用相对路径或绝对路径，例如`/api/like` or `https://example.com/api/like`
 
 完事后`hexo clean && hexo g && hexo s`启动博客，在你想要的显示位置（例如文章末尾）插入如下代码块，打开博客瞅瞅效果吧！
 
@@ -179,6 +179,10 @@ if ($allow) {
 
 然后：[安装配置插件](#安装配置插件)
 
+### 使用OpenResty后端（推荐，高性能）
+
+[README](OpenResty/README.md)
+
 ### 使用Leancloud做后端（不推荐，中国大陆要备案）
 
 下面开始部署教程，你需要有一个[**leancloud**账号](https://www.leancloud.com/)，没有的话就注册一个，只需要邮箱即可注册，无需绑定信用卡之类的，注册即用（中国大陆版要备案，可以使用国际版，备案要支付宝刷脸）。
@@ -212,6 +216,16 @@ if ($allow) {
 - [x] 长期接收意见以及维护
 
 ## 版本更新记录
+**v4.0.0 (2026.03.12)**
+
+不再允许同一个访客多次点赞同一个页面，现版本只允许点一次赞，再次点击取消点赞
+
+后端地址可以填写相对路径、绝对路径，如`/api/like` or `https://example.com/api/like`
+
+新增了OpenResty路由模块
+
+**注意，v3.* 升级到v4.* 需要更新后端！**
+
 **v3.0.0 (2025.12.03)**
 
 不再使用URL传参，改为Post JSON，避免爬虫扫接口，添加新的存储PHP

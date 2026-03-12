@@ -7,8 +7,6 @@
     PHPBackend: "/like",   // PHP后端接口地址
     AppID: "", // Leancloud AppID
     AppKEY: "", // Leancloud AppKEY
-    xianzhi: true, // 是否限制点赞数
-    number: 5, // 限制几个赞
     GoogleAnalytics: false, // 是否启用谷歌分析事件追踪，默认关闭
     GAEventCategory: "Engagement", // 事件类别，默认Engagement
     GAEventAction: "Like" // 事件操作名称，默认Like
@@ -16,23 +14,32 @@
   // === 配置项 END ===
   if (!BLOG_LIKE_CONFIG.enable) return;
 
+  var alertBox = null;
+  var alertTimer = null;
   function showAlert(msg) {
-    var alertBox = document.createElement("div");
+    if (!alertBox) {
+      alertBox = document.createElement("div");
+      alertBox.style.position = "fixed";
+      alertBox.style.top = "20%";
+      alertBox.style.left = "50%";
+      alertBox.style.transform = "translate(-50%, -50%)";
+      alertBox.style.backgroundColor = "rgba(0, 0, 0, 0.85)";
+      alertBox.style.color = "white";
+      alertBox.style.padding = "15px 30px";
+      alertBox.style.borderRadius = "8px";
+      alertBox.style.zIndex = "1000";
+      alertBox.style.fontSize = "16px";
+      alertBox.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.2)";
+      document.body.appendChild(alertBox);
+    }
     alertBox.innerText = msg;
-    alertBox.style.position = "fixed";
-    alertBox.style.top = "20%";
-    alertBox.style.left = "50%";
-    alertBox.style.transform = "translate(-50%, -50%)";
-    alertBox.style.backgroundColor = "rgba(0, 0, 0, 0.85)";
-    alertBox.style.color = "white";
-    alertBox.style.padding = "15px 30px";
-    alertBox.style.borderRadius = "8px";
-    alertBox.style.zIndex = "1000";
-    alertBox.style.fontSize = "16px";
-    alertBox.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.2)";
-    document.body.appendChild(alertBox);
-    setTimeout(function () {
-      document.body.removeChild(alertBox);
+    if (alertTimer) clearTimeout(alertTimer);
+    alertTimer = setTimeout(function () {
+      if (alertBox && alertBox.parentNode) {
+        alertBox.parentNode.removeChild(alertBox);
+      }
+      alertBox = null;
+      alertTimer = null;
     }, 1800);
   }
   function heartAnimation() {
@@ -64,13 +71,32 @@
     document.cookie = name + "=" + value + ";" + expires + ";path=/";
   }
 
-  function getVisitorLikes(url) {
-    var likes = getCookie("likes_" + url);
-    return likes ? parseInt(likes) : 0;
+  function deleteCookie(name) {
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
   }
 
-  function setVisitorLikes(url, likes) {
-    setCookie("likes_" + url, likes, 30);
+  function getVisitorLiked(url) {
+    var liked = getCookie("likes_" + url);
+    return liked === "1";
+  }
+
+  function setVisitorLiked(url, liked) {
+    if (liked) {
+      setCookie("likes_" + url, "1", 30);
+    } else {
+      deleteCookie("likes_" + url);
+    }
+  }
+
+  function setHeartLiked(liked) {
+    var heart = document.querySelector('.heart');
+    if (!heart) return;
+    if (liked) {
+      heart.classList.add('liked');
+    } else {
+      heart.classList.remove('liked');
+      heart.classList.remove('heartAnimation');
+    }
   }
 
   function updateZanText(num) {
@@ -93,28 +119,32 @@
     window.url = location.host + location.pathname;
     var url = window.url;
     var flag = window.flag;
+    var isRequesting = false;
 
     function getCloudflareApiUrl() {
-      if (!BLOG_LIKE_CONFIG.CloudflareBackend) {
-        return null;
-      }
-      // 格式化后端地址
-      var backend = BLOG_LIKE_CONFIG.CloudflareBackend.replace(/^https?:\/\//, '').replace(/\/$/, '');
-      return 'https://' + backend + '/like';
+      return BLOG_LIKE_CONFIG.CloudflareBackend;
     }
 
-    function cloudflareLike(flag) {
+    function cloudflareLike(delta, done) {
       var apiUrl = getCloudflareApiUrl();
       if (!apiUrl) {
-        showAlert("Cloudflare Workers 后端未配置");
-        console.error('Cloudflare后端地址未配置！');
+        showAlert("Cloudflare 后端未配置");
+        console.error('Cloudflare 后端未配置');
+        if (done) done();
         return;
       }
 
       var bodyData = {
         Url: url,
-        Add: flag ? 1 : 0
+        Add: delta
       };
+
+      var finished = false;
+      function finish() {
+        if (finished) return;
+        finished = true;
+        if (done) done();
+      }
 
       fetch(apiUrl, {
         method: 'POST',
@@ -133,39 +163,45 @@
       .then(function(d){
         if (typeof d['likes'] !== "undefined") {
           updateZanText(d['likes']);
-          if(flag) {
-            var currentLikes = getVisitorLikes(url);
-            setVisitorLikes(url, currentLikes + 1);
+          if (delta > 0) {
+            setVisitorLiked(url, true);
+            setHeartLiked(true);
+            heartAnimation();
             showAlert("点赞成功");
+          } else if (delta < 0) {
+            setVisitorLiked(url, false);
+            setHeartLiked(false);
+            showAlert("取消点赞");
           }
         } else {
-          showAlert("获取点赞数失败");
+          showAlert("Failed to get likes");
         }
+        finish();
       })
       .catch(function(e){
         if(e && e.message === "429") return;
         showAlert("后端请求失败, 请检查Cloudflare配置");
         console.error("Cloudflare 请求失败：", e);
+        finish();
       });
     }
-    function likeBackend(flag) {
-      cloudflareLike(flag);
+    function likeBackend(delta, done) {
+      cloudflareLike(delta, done);
     }
     window.goodplus = function(u, f) {
-      if(BLOG_LIKE_CONFIG.xianzhi) {
-        var currentLikes = getVisitorLikes(url);
-        if (currentLikes >= BLOG_LIKE_CONFIG.number) {
-          showAlert("最多只能点 " + BLOG_LIKE_CONFIG.number + " 个赞");
-          return;
-        }
-      }
-      sendGAEvent();
-      likeBackend(true);
-      heartAnimation();
+      if (isRequesting) return;
+      var targetLiked = !getVisitorLiked(url);
+      var delta = targetLiked ? 1 : -1;
+      if (targetLiked) sendGAEvent();
+      isRequesting = true;
+      likeBackend(delta, function(){
+        isRequesting = false;
+      });
     };
 
     document.addEventListener('DOMContentLoaded', function() {
-      likeBackend(false);
+      setHeartLiked(getVisitorLiked(url));
+      likeBackend(0);
     });
   }
 
@@ -175,6 +211,7 @@
     window.url = location.host + location.pathname;
     var url = window.url;
     var flag = window.flag;
+    var isRequesting = false;
 
     function initLeanCloud() {
       if(!BLOG_LIKE_CONFIG.AppID || !BLOG_LIKE_CONFIG.AppKEY) {
@@ -190,61 +227,82 @@
       } catch(e) { showAlert("LeanCloud 初始化失败"); return false; }
       return true;
     }
-    function leanCloudLike(flag) {
-      if (!initLeanCloud()) return;
+    function leanCloudLike(delta, done) {
+      if (!initLeanCloud()) { if (done) done(); return; }
       var Zan = AV.Object.extend('Zan');
       var query = new AV.Query('Zan');
       query.equalTo("url", url);
       query.find().then(function (results) {
         if (results.length === 0) {
           var zan = new Zan();
+          var nextViews = delta > 0 ? 1 : 0;
           zan.set('url', url);
-          zan.set('views', flag ? 1 : 0);
+          zan.set('views', nextViews);
           zan.save().then(function () {
-            updateZanText(flag ? 1 : 0);
-            if(flag) {
-              var currentLikes = getVisitorLikes(url);
-              setVisitorLikes(url, currentLikes + 1);
+            updateZanText(nextViews);
+            if (delta > 0) {
+              setVisitorLiked(url, true);
+              setHeartLiked(true);
+              heartAnimation();
               showAlert("点赞成功");
+            } else if (delta < 0) {
+              setVisitorLiked(url, false);
+              setHeartLiked(false);
+              showAlert("取消点赞");
             }
+            if (done) done();
           });
         } else {
           var zan = results[0];
-          var vViews = zan.get('views');
-          if (flag) {
-            zan.set('views', vViews + 1);
+          var vViews = zan.get('views') || 0;
+          if (delta > 0) {
+            var inc = vViews + 1;
+            zan.set('views', inc);
             zan.save().then(function () {
-              updateZanText(vViews + 1);
-              var currentLikes = getVisitorLikes(url);
-              setVisitorLikes(url, currentLikes + 1);
+              updateZanText(inc);
+              setVisitorLiked(url, true);
+              setHeartLiked(true);
+              heartAnimation();
               showAlert("点赞成功");
+              if (done) done();
+            });
+          } else if (delta < 0) {
+            var dec = Math.max(0, vViews - 1);
+            zan.set('views', dec);
+            zan.save().then(function () {
+              updateZanText(dec);
+              setVisitorLiked(url, false);
+              setHeartLiked(false);
+              showAlert("取消点赞");
+              if (done) done();
             });
           } else {
             updateZanText(vViews);
+            if (done) done();
           }
         }
       }).catch(function (error) {
         showAlert("LeanCloud 失败: " + (error.message?error.message:error));
         console.error("查询或保存出错：", error);
+        if (done) done();
       });
     }
-    function likeBackend(flag) {
-      leanCloudLike(flag);
+    function likeBackend(delta, done) {
+      leanCloudLike(delta, done);
     }
     window.goodplus = function(u, f) {
-      if(BLOG_LIKE_CONFIG.xianzhi) {
-        var currentLikes = getVisitorLikes(url);
-        if (currentLikes >= BLOG_LIKE_CONFIG.number) {
-          showAlert("最多只能点 " + BLOG_LIKE_CONFIG.number + " 个赞");
-          return;
-        }
-      }
-      sendGAEvent();
-      likeBackend(true);
-      heartAnimation();
+      if (isRequesting) return;
+      var targetLiked = !getVisitorLiked(url);
+      var delta = targetLiked ? 1 : -1;
+      if (targetLiked) sendGAEvent();
+      isRequesting = true;
+      likeBackend(delta, function(){
+        isRequesting = false;
+      });
     };
     document.addEventListener('DOMContentLoaded', function() {
-      likeBackend(false);
+      setHeartLiked(getVisitorLiked(url));
+      likeBackend(0);
     });
   }
 
@@ -254,26 +312,24 @@
     window.url = location.host + location.pathname;
     var url = window.url;
     var flag = window.flag;
+    var isRequesting = false;
 
     function getPHPApiUrl() {
-      if (!BLOG_LIKE_CONFIG.PHPBackend) return null;
-      var backend = BLOG_LIKE_CONFIG.PHPBackend;
-      // 格式化后端地址
-      backend = backend.replace(/^https?:\/\//, '').replace(/\/$/, '');
-      return 'https://' + backend + '/like';
+      return BLOG_LIKE_CONFIG.CloudflareBackend;
     }
 
-    function phpLike(flag) {
+    function phpLike(delta, done) {
       var apiUrl = getPHPApiUrl();
       if (!apiUrl) {
         showAlert("PHP 后端未配置");
         console.error('PHP 后端地址未配置！');
+        if (done) done();
         return;
       }
 
       var bodyData = {
         Url: url,
-        Add: flag ? 1 : 0
+        Add: delta
       };
 
       var xhr = new XMLHttpRequest();
@@ -287,10 +343,15 @@
               var response = JSON.parse(xhr.responseText);
               if (typeof response.likes !== "undefined") {
                 updateZanText(response.likes);
-                if(flag) {
-                  var currentLikes = getVisitorLikes(url);
-                  setVisitorLikes(url, currentLikes + 1);
+                if (delta > 0) {
+                  setVisitorLiked(url, true);
+                  setHeartLiked(true);
+                  heartAnimation();
                   showAlert("点赞成功");
+                } else if (delta < 0) {
+                  setVisitorLiked(url, false);
+                  setHeartLiked(false);
+                  showAlert("取消点赞");
                 }
               } else {
                 showAlert("后端请求失败,请稍后再试");
@@ -302,30 +363,30 @@
           } else {
             showAlert("请求失败, 状态码: " + xhr.status);
           }
+          if (done) done();
         }
       };
       xhr.send(JSON.stringify(bodyData));
     }
 
-    function likeBackend(flag) {
-      phpLike(flag);
+    function likeBackend(delta, done) {
+      phpLike(delta, done);
     }
 
     window.goodplus = function(u, f) {
-      if(BLOG_LIKE_CONFIG.xianzhi) {
-        var currentLikes = getVisitorLikes(url);
-        if (currentLikes >= BLOG_LIKE_CONFIG.number) {
-          showAlert("最多只能点 " + BLOG_LIKE_CONFIG.number + " 个赞");
-          return;
-        }
-      }
-      sendGAEvent();
-      likeBackend(true);
-      heartAnimation();
+      if (isRequesting) return;
+      var targetLiked = !getVisitorLiked(url);
+      var delta = targetLiked ? 1 : -1;
+      if (targetLiked) sendGAEvent();
+      isRequesting = true;
+      likeBackend(delta, function(){
+        isRequesting = false;
+      });
     };
 
     document.addEventListener('DOMContentLoaded', function() {
-      likeBackend(false);
+      setHeartLiked(getVisitorLiked(url));
+      likeBackend(0);
     });
   }
 

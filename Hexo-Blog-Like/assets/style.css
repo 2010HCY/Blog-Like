@@ -27,7 +27,7 @@
 #zan {
 	margin-top:40px;
 	position:relative;
-	    -webkit-transition: box-shadow .3s ease-in-out;
+	  -webkit-transition: box-shadow .3s ease-in-out;
     -moz-transition: box-shadow .3s ease-in-out;
     -o-transition: box-shadow .3s ease-in-out;
     -ms-transition: box-shadow .3s ease-in-out;
@@ -79,5 +79,8 @@
   animation-duration: 0.8s;
   animation-iteration-count: 1;
   animation-timing-function: steps(28);
+  background-position: right;
+}
+#zan .heart.liked {
   background-position: right;
 }
