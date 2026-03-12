@@ -1,6 +1,6 @@
 {
   "name": "hexo-blog-like",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A simple and easy-to-use free blog like plugin.",
   "main": "lib/Blog-Like.js",
   "dependencies": {

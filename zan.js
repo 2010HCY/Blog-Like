@@ -167,11 +167,9 @@
             setVisitorLiked(url, true);
             setHeartLiked(true);
             heartAnimation();
-            showAlert("点赞成功");
           } else if (delta < 0) {
             setVisitorLiked(url, false);
             setHeartLiked(false);
-            showAlert("取消点赞");
           }
         } else {
           showAlert("Failed to get likes");
@@ -244,11 +242,9 @@
               setVisitorLiked(url, true);
               setHeartLiked(true);
               heartAnimation();
-              showAlert("点赞成功");
             } else if (delta < 0) {
               setVisitorLiked(url, false);
               setHeartLiked(false);
-              showAlert("取消点赞");
             }
             if (done) done();
           });
@@ -263,7 +259,6 @@
               setVisitorLiked(url, true);
               setHeartLiked(true);
               heartAnimation();
-              showAlert("点赞成功");
               if (done) done();
             });
           } else if (delta < 0) {
@@ -273,7 +268,6 @@
               updateZanText(dec);
               setVisitorLiked(url, false);
               setHeartLiked(false);
-              showAlert("取消点赞");
               if (done) done();
             });
           } else {
@@ -347,11 +341,9 @@
                   setVisitorLiked(url, true);
                   setHeartLiked(true);
                   heartAnimation();
-                  showAlert("点赞成功");
                 } else if (delta < 0) {
                   setVisitorLiked(url, false);
                   setHeartLiked(false);
-                  showAlert("取消点赞");
                 }
               } else {
                 showAlert("后端请求失败,请稍后再试");

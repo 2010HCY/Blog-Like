@@ -41,15 +41,16 @@ npm install hexo-blog-like --save
 
 ```yml
 Blog-Like:
-  enable: true #是否启用插件
-  Backend: Cloudflare # 或者 Cloudflare | Leancloud | PHP，默认Cloudflare
-  CloudflareBackend: #你的后端地址
-  PHPBackend: #自部署PHP后端地址
-  AppID: #如果你使用Leancloud，记得填你的Leancloud ID和KEY，获取方法在后面
-  AppKEY: #你的KEY
-  GoogleAnalytics: true #是否向谷歌分析发送点赞事件，默认关闭
-  GAEventCategory: Engagement #点赞事件类别，默认Engagement
-  GAEventAction: Like #事件名称，默认Like
+  enable: true                   #是否启用插件
+  AutoInjectLike: true           #是否开启自动添加点赞组件功能，默认关闭
+  Backend: Cloudflare            #Cloudflare | Leancloud | PHP，默认Cloudflare
+  CloudflareBackend:             #Cloudflare后端地址
+  PHPBackend:                    #自部署PHP后端地址
+  AppID:                         #如果使用Leancloud，在此填写Leancloud ID和KEY
+  AppKEY:                        #Leancloud KEY
+  GoogleAnalytics: true          #是否向谷歌分析发送点赞事件，默认关闭
+  GAEventCategory: Engagement    #点赞事件类别，默认Engagement
+  GAEventAction: Like            #事件名称，默认Like
 ```
 
 后端地址可以用相对路径或绝对路径，例如`/api/like` or `https://example.com/api/like`
@@ -216,6 +217,10 @@ if ($allow) {
 - [x] 长期接收意见以及维护
 
 ## 版本更新记录
+**v4.0.1 (2026.03.12)**
+
+新增自动添加点赞组件到文章末尾功能
+
 **v4.0.0 (2026.03.12)**
 
 不再允许同一个访客多次点赞同一个页面，现版本只允许点一次赞，再次点击取消点赞

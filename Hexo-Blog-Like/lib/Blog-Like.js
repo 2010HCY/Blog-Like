@@ -41,7 +41,8 @@ hexo.on('generateAfter', function() {
     AppKEY: cfg.AppKEY || "",
     GoogleAnalytics: (typeof cfg.GoogleAnalytics === 'undefined' ? false : cfg.GoogleAnalytics),
     GAEventCategory: cfg.GAEventCategory || "Engagement",
-    GAEventAction: cfg.GAEventAction || "Like"
+    GAEventAction: cfg.GAEventAction || "Like",
+    AutoInjectLike: (typeof cfg.AutoInjectLike === 'undefined' ? false : cfg.AutoInjectLike)
   };
 
   // 复制静态资源
@@ -468,3 +469,20 @@ hexo.on('generateAfter', function() {
 hexo.extend.injector.register('head_end', function() {
   return `<link rel="stylesheet" href="/Blog-Like/style.css">\n<script src="/Blog-Like/Blog-Like.js"></script>`;
 }, 'default');
+
+// 自动注入点赞组件到文章末尾
+hexo.extend.filter.register('after_post_render', function(data) {
+  const cfg = hexo.config['Blog-Like'] || {};
+  if (!cfg.enable || !cfg.AutoInjectLike) {
+    return;
+  }
+  if (data.__post === false) {
+    return;
+  }
+  const likeHTML = `<div id="zan" class="clearfix">
+        <div class="heart" onclick="goodplus(url, flag)"></div>
+        <br>
+        <div id="zan_text"></div>
+    </div>`;
+  data.content += '\n' + likeHTML;
+});
