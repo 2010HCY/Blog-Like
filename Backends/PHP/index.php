@@ -16,6 +16,12 @@ $ALLOW_DOMAINS = [
     'example.example.com',
 ];
 
+/* ======================== 路由配置 ======================== */
+$ROUTE_MAP = [
+    '/visitor-count' => 'handle_visitor',
+    '/like'    => 'handle_like',
+];
+
 /* ======================== CORS 处理 ======================== */
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -85,16 +91,20 @@ try {
     exit();
 }
 
-/* ======================== 路由 ======================== */
-
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-if (preg_match('#^/visitor-count/?#', $path)) handle_visitor($Db);
-elseif (preg_match('#^/like/?#', $path))       handle_like($Db);
-else {
+if (array_key_exists($path, $ROUTE_MAP)) {
+    $func = $ROUTE_MAP[$path];
+    
+    if (function_exists($func)) {
+        $func($Db);
+    } else {
+        http_response_code(501);
+        echo json_encode(['error' => '路由未定义处理函数']);
+    }
+} else {
     http_response_code(404);
-    echo json_encode(['error'=>'Not Found', 'debug'=>$path]);
-    exit();
+    echo json_encode(['error' => 'Route not found']);
 }
 
 /* ======================== 模块：访问统计 ======================== */

@@ -1,3 +1,3 @@
-[submodule "Blog-Likes-Cloudflare"]
-	path = Blog-Likes-Cloudflare
+[submodule "Backends/Blog-Likes-Cloudflare"]
+	path = Backends/Blog-Likes-Cloudflare
 	url = https://github.com/2010HCY/Blog-Likes-Backend

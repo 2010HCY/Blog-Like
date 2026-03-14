@@ -4,30 +4,46 @@
 
 此点赞功能适配Hexo博客，适合任何静态网站，只是步骤有所不同，以下是它的特点：
 
-1. 免费，此点赞功能可以使用**leancloud**、**Cloudflare**或自部署服务器存储点赞数据，免费足够使用
+1. 免费，支持 Cloudflare / LeanCloud / 自部署
 2. 简洁，轻轻一点即可完成操作
 3. 小巧，大小仅24.4kb（图像资源20kb）
-4. 便捷，Hexo框架的博客仅需3步即可使用！
+4. 易用：Hexo 仅需三步安装
 
 效果展示：
 
-<img src="/images/效果展示.gif" style="zoom:80%;" />
+<img src="./images/效果展示.gif" style="zoom:80%;" />
 
-不仅仅是Hexo，所以静态博客都可以用，只是其他博客需要自己下载代码植入博客，Hexo可以一键安装
+不仅仅是Hexo，所有静态博客都可以用，只是其他博客需要自己下载代码植入博客，Hexo可以一键安装
 
-你可以到我的博客体验一下点赞功能哦 [立即前往](https://hcyhub.com/%E7%BD%91%E7%AB%99%E7%BB%B4%E6%8A%A4/Hexo%E5%8D%9A%E5%AE%A2%E5%8A%A0%E5%85%A5%E7%82%B9%E8%B5%9E%E5%8A%9F%E8%83%BD) 
+你可以到我的博客体验一下点赞功能哦 [立即前往](https://hcyhub.com/%E7%BD%91%E7%AB%99%E7%BB%B4%E6%8A%A4/Hexo%E7%82%B9%E8%B5%9E%E6%8F%92%E4%BB%B6) 
 
-## 部署教程
+## 快速开始
 
-### 使用Cloudflare做后端（推荐，可白嫖）
+### 后端部署
+
+后端支持4种部署方法，分别是：
+
+#### 1. 使用Cloudflare做后端（推荐，可白嫖，最简单）
 
 [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/2010HCY/Blog-Likes-Backend)
 
-点击上方按钮一键部署后端，然后绑定自定义域（自带的workers.dev在中国大陆访问不稳定）
+点击上方按钮一键部署后端，然后绑定自定义域（自带的workers.dev在中国大陆访问不稳定），部署好后默认路由是`example.com/like`
 
-记好你的Workers地址，然后
+#### 2. 使用PHP做后端（相对简单）
 
-### 安装配置插件
+[PHP部署教程](Backends/PHP/README.md)
+
+#### 3. 使用OpenResty后端（高性能）
+
+[OpenResty部署教程](Backends/OpenResty/README.md)
+
+#### 4. 使用Leancloud做后端（不推荐，中国大陆要备案）
+
+[Leancloud部署教程](Backends/Leancloud/README.md)
+
+### 前端部署
+
+#### 安装配置插件
 
 > 适用于Hexo框架，其他框架我没用过
 
@@ -65,148 +81,65 @@ Blog-Like:
 </div>
 ```
 
-<img src="/images/效果展示.png" style="zoom:80%;" />
+<img src="./images/效果展示.png" style="zoom:80%;" />
 
 如果你不想要手动一个个添加，你可以编辑主题的文章模板（通常位于主题/主题名/目录下的`layout/_partial/article.ejs`或`layout/post.ejs`文件）里添加此代码段。
 
 > 我使用的主题是`matery`，该主题把代码段放置在`layout/_partial/reprint-statement.ejs`文件中最前面效果最好，其他主题视情况而定。
 >
-> <img src="/images/添加代码段.png" style="zoom:80%;" />
+> <img src="./images/添加点赞组件.png" style="zoom:80%;" />
+
+#### 手动引入文件
+
+下载项目根目录下的三个文件`zan.js`、`zan.css`、`zan.png`，手动配置JS文件头的配置项、CSS中的图片路径
+
+zan.js需要改的地方：
+
+```
+// === 配置项 BEGIN ===
+var BLOG_LIKE_CONFIG = {
+    enable: true,
+    Backend: "Cloudflare",           // Cloudflare | Leancloud | PHP
+    CloudflareBackend: "",           // Cloudflare后端地址
+    PHPBackend: "/like",             // PHP后端接口地址
+    AppID: "",                       // Leancloud AppID
+    AppKEY: "",                      // Leancloud AppKEY
+    GoogleAnalytics: false,          // 是否启用谷歌分析事件追踪，默认关闭
+    GAEventCategory: "Engagement",   // 事件类别，默认Engagement
+    GAEventAction: "Like"            // 事件操作名称，默认Like
+};
+// === 配置项 END ===
+```
+
+zan.css需要改的地方：
+
+```
+#zan .heart {
+  background: url(zan.png);   /* 把zan.png修改成实际图片路径或图床URL */
+  background-position: left;
+  background-repeat: no-repeat;
+  height: 100px;
+  width: 100px;
+  background-size: 2900%;
+  float: left;
+  display: inline-block;
+  position: relative;
+  left: 0;
+  top: 0;
+  z-index: 0;
+}
+```
+
+然后在HTML页面`<body>`标签后`</body>`前引入JS、CSS
+
+```
+<script type="text/javascript" src="js/zan.js" ></script>
+<link rel="stylesheet" href="css/zan.css" />
+```
 
 对你有帮助的话给我个Starred吧！
 
 [![Star this project on GitHub](https://img.shields.io/github/stars/2010HCY/Blog-Like.svg?style=social)](https://github.com/2010HCY/Blog-Like)
-
-### 使用PHP做后端（推荐，自由度高）
-
-部署PHP后端需要有自己的服务器，服务器上应安装PHP环境（我的版本是8.4.13），Mysql数据库。
-
-#### Mysql数据库
-
-首先创建一个数据库，记好以下信息：
-
-> 主机地址通常是 localhost，看你的数据库部署方式，自己找数据库连接地址。
-
-1. 数据库主机地址
-2. 数据库名称
-3. 数据库用户名
-4. 数据库密码
-
-初始化数据库：
-
-1. 创建 Post 表
-
-```
-CREATE TABLE `Post` (
-  `Url` varchar(512) NOT NULL COMMENT 'URL',
-  `VisitCount` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'PV',
-  `VisitorCount` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'UV',
-  `CreatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `UpdatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`Url`),
-  UNIQUE KEY `url_unique` (`Url`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='页面访问数据';
-```
-
-2. 创建 Site 表
-
-```
-CREATE TABLE `Site` (
-  `Domain` varchar(255) NOT NULL COMMENT 'Domain',
-  `VisitCount` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'PV',
-  `VisitorCount` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'UV',
-  `CreatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `UpdatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`Domain`),
-  UNIQUE KEY `domain_unique` (`Domain`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='站点访问数据';
-```
-
-3. 创建 Likes 表
-
-```
-CREATE TABLE `Likes` (
-  `Url` varchar(512) NOT NULL COMMENT 'URL',
-  `Likes` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '点赞数',
-  `CreatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `UpdatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`Url`),
-  UNIQUE KEY `url_unique` (`Url`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='点赞数据';
-```
-
-Post表是记录文章访问量统计数据的，Site表是记录站点访问量统计数据的（此PHP后端是二合一的，包含访问量统计+点赞后端两个功能，若不需要访问量统计Post、Site表可以不创建）
-
-#### PHP后端部署
-
-下载[index.php](/index.php)，用文本编辑器打开，修改配置项、CORS跨域、默认跨域。
-
-> 此PHP还有访问量统计后端功能，点赞后端只是一部分
-
-```
-/* ======================== 配置 ======================== */
-
-define('DB_HOST', 'HOST');       // 数据库主机地址
-define('DB_NAME', 'DbName');     // 数据库名称
-define('DB_USER', 'DbUser');     // 数据库用户名
-define('DB_PASS', 'Password');   // 数据库密码
-
-// 允许的域名
-$ALLOW_DOMAINS = [
-    'example.com', // 可添加多个，用逗号分隔
-    'example.example.com',
-];
-
-/* ======================== CORS 处理 ======================== */
-
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-$allow = false;
-
-foreach ($ALLOW_DOMAINS as $dom) {
-    if (preg_match("~^https://([a-z0-9-]+\.)?$dom$~i", $origin)) {
-        $allow = true;
-        break;
-    }
-}
-
-if ($allow) {
-    header("Access-Control-Allow-Origin: $origin");
-} else {
-    header("Access-Control-Allow-Origin: https://example.com"); // 默认允许的域名，自己修改
-}
-```
-
-填写好后部署网站，记下PHP网站运行地址，`/like`是点赞后端路由地址`/visitor-count`是访问量统计地址。
-
-然后：[安装配置插件](#安装配置插件)
-
-### 使用OpenResty后端（推荐，高性能）
-
-[README](OpenResty/README.md)
-
-### 使用Leancloud做后端（不推荐，中国大陆要备案）
-
-下面开始部署教程，你需要有一个[**leancloud**账号](https://www.leancloud.com/)，没有的话就注册一个，只需要邮箱即可注册，无需绑定信用卡之类的，注册即用（中国大陆版要备案，可以使用国际版，备案要支付宝刷脸）。
-
-在开始之前，你需要获取AppID和AppKEY这两个凭证：
-
-#### 1.初始化leancloud应用并获取凭证
-
-注册好[**leancloud**账号](https://www.leancloud.com/)后进入控制台，点击创建应用，计费计划选择开发版，应用名称、描述随便填，
-
-<img src="/images/创建应用.png" style="zoom:80%;" />
-
-创建好后进入应用设置→点击应用凭证，将**AppID**和**AppKey**复制下来待会要用
-
-<img src="/images/获取应用凭证.png" style="zoom:80%;" />
-
-然后打开数据存储→结构化数据，创建一个名为Zan的Class。
-
-<img src="/images/创建Class.png" style="zoom:70%;" />
-
-> leancloud有**中国版和国际版**，国际版**无需备案**，完成上述步骤即可使用，中国版需要**多一个步骤****绑定API域名**，在设置→域名绑定里。（根据服务条款域名好像要备案）
-
-获取好凭证后按照安装配置插件的步骤安装即可
 
 ## 未来打算
 
@@ -216,7 +149,30 @@ if ($allow) {
 - [x] 支持多种存储方式
 - [x] 长期接收意见以及维护
 
+## 其他
+
+### 项目目录说明
+
+```
+Blog-Like
+├── Backends/        # 后端
+├── Hexo-Blog-Like/  # Hexo插件
+├── zan.css
+├── zan.js
+└── zan.png
+```
+
+根目录下的zan.js是完整版JS，适合在非Hexo网站上引入使用，可删除未使用的函数凹一凹空间。
+
 ## 版本更新记录
+
+<details>
+<summary>点击展开</summary>
+
+**v4.0.2 (2026.03.14)**
+
+分类文件，文档修改
+
 **v4.0.1 (2026.03.12)**
 
 新增自动添加点赞组件到文章末尾功能
@@ -272,5 +228,4 @@ if ($allow) {
 
 博客点赞插件横空出世 
 
-
-
+</details>

@@ -2,14 +2,14 @@
   // === 配置项 BEGIN ===
   var BLOG_LIKE_CONFIG = {
     enable: true,
-    Backend: "Cloudflare", // Cloudflare | Leancloud | PHP
-    CloudflareBackend: "", // Cloudflare后端地址
-    PHPBackend: "/like",   // PHP后端接口地址
-    AppID: "", // Leancloud AppID
-    AppKEY: "", // Leancloud AppKEY
-    GoogleAnalytics: false, // 是否启用谷歌分析事件追踪，默认关闭
-    GAEventCategory: "Engagement", // 事件类别，默认Engagement
-    GAEventAction: "Like" // 事件操作名称，默认Like
+    Backend: "Cloudflare",           // Cloudflare | Leancloud | PHP
+    CloudflareBackend: "",           // Cloudflare后端地址
+    PHPBackend: "/like",             // PHP后端接口地址
+    AppID: "",                       // Leancloud AppID
+    AppKEY: "",                      // Leancloud AppKEY
+    GoogleAnalytics: false,          // 是否启用谷歌分析事件追踪，默认关闭
+    GAEventCategory: "Engagement",   // 事件类别，默认Engagement
+    GAEventAction: "Like"            // 事件操作名称，默认Like
   };
   // === 配置项 END ===
   if (!BLOG_LIKE_CONFIG.enable) return;
