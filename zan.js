@@ -43,14 +43,15 @@
     }, 1800);
   }
   function heartAnimation() {
-    var heart = document.querySelector('.heart');
-    if (!heart) return;
-    heart.classList.remove('heartAnimation');
-    void heart.offsetWidth;
-    heart.classList.add('heartAnimation');
-    setTimeout(function(){
+    var hearts = document.querySelector('.heart');
+    hearts.forEach(function(heart) {
       heart.classList.remove('heartAnimation');
-    },800);
+      void heart.offsetWidth;
+      heart.classList.add('heartAnimation');
+      setTimeout(function(){
+        heart.classList.remove('heartAnimation');
+      },800);
+    });
   }
 
   function getCookie(name) {
@@ -89,21 +90,23 @@
   }
 
   function setHeartLiked(liked) {
-    var heart = document.querySelector('.heart');
-    if (!heart) return;
-    if (liked) {
-      heart.classList.add('liked');
-    } else {
-      heart.classList.remove('liked');
-      heart.classList.remove('heartAnimation');
-    }
+    var hearts = document.querySelector('.heart');
+    hearts.forEach(function(heart) {
+      if (liked) {
+        heart.classList.add('liked');
+      } else {
+        heart.classList.remove('liked');
+        heart.classList.remove('heartAnimation');
+      }
+    });
   }
 
   function updateZanText(num) {
-    var el = document.getElementById("zan_text");
-    if (el) el.innerHTML = num;
+    var els = document.querySelector('#zan_text');
+    els.forEach(function(el) {
+      el.innerHTML = num;
+    });
   }
-
   function sendGAEvent() {
     if (BLOG_LIKE_CONFIG.GoogleAnalytics && typeof window.gtag === 'function') {
       gtag('event', BLOG_LIKE_CONFIG.GAEventAction || 'Like', {
